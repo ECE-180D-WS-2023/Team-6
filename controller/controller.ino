@@ -20,8 +20,8 @@ ICM_20948_I2C myICM;
 // END IMU DECLARATIONS
 
 // MQTT DECLARATIONS
-const char *ssid =  "ITSMONDAYWIPE";   // name of your WiFi network
-const char *password =  "sharpantsnow"; // password of the WiFi network
+const char *ssid =  "####";   // name of your WiFi network
+const char *password =  "####"; // password of the WiFi network
 
 const char *ID = "player1";  // Name of our device, must be unique
 const char *TOPIC = "team6";  // Topic to subcribe to
