@@ -97,7 +97,8 @@ class Player(Sprite, Singleton):
         Should be called in Player.update().
         """
         lvl = Level.instance
-        if not lvl: return
+        if not lvl:
+            return
         for platform in lvl.platforms:
             # check falling and colliding <=> isGrounded ?
             if self._velocity.y > .5:
@@ -105,11 +106,13 @@ class Player(Sprite, Singleton):
                 if platform.bonus and collide_rect(self, platform.bonus):
                     self.onCollide(platform.bonus)
                     self.jump(platform.bonus.force)
+                    config.jump_sound.play()
 
                 # check collisions with platform
                 if collide_rect(self, platform):
                     self.onCollide(platform)
                     platform.onCollide()
+                    config.basic_sound.play()
 
     def update(self) -> None:
         """ For position and velocity updates.

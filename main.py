@@ -78,6 +78,7 @@ class Game(Singleton):
     def _render_loop(self):
         # ----------- Display -----------
         self.window.fill(config.WHITE)
+        self.window.blit(config.backround, (-100, -100))  # Backround image
         self.lvl.draw(self.window)
         self.player.draw(self.window)
 

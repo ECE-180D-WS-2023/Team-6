@@ -32,7 +32,7 @@ GRAVITY = .5
 PLATFORM_COLOR = FOREST_GREEN
 PLATFORM_COLOR_LIGHT = BROWN
 PLATFORM_SIZE = (150, 10)
-PLATFORM_DISTANCE_GAP = (50, 150)
+PLATFORM_DISTANCE_GAP = (50, 200)
 MAX_PLATFORM_NUMBER = 15  # Chance is 1/n
 BONUS_SPAWN_CHANCE = 5  # Chance is 1/n
 BONUS_SIZE = (40, 20)
@@ -47,5 +47,13 @@ doodle = pygame.image.load('Images/doodle.png')
 doodle = pygame.transform.scale(doodle, PLAYER_SIZE)
 doodle_l = pygame.transform.flip(doodle, True, False)
 
-spring = pygame.image.load('Images/spring.jpg')
+spring = pygame.image.load('Images/spring.png')
 spring = pygame.transform.scale(spring, BONUS_SIZE)
+
+backround = pygame.image.load('Images/backround_2.jpg')
+
+
+# Sounds
+jump_sound = pygame.mixer.Sound("Images/jump_sound.mp3")
+break_sound = pygame.mixer.Sound("Images/breaking_sound.mp3")
+basic_sound = pygame.mixer.Sound("Images/basic_jumping.mp3")
