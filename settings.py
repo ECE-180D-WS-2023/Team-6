@@ -56,4 +56,4 @@ backround = pygame.image.load('Images/backround_2.jpg')
 # Sounds
 jump_sound = pygame.mixer.Sound("Images/jump_sound.mp3")
 break_sound = pygame.mixer.Sound("Images/breaking_sound.mp3")
-basic_sound = pygame.mixer.Sound("Images/basic_jumping.mp3")
+basic_sound = pygame.mixer.Sound("Images/jump_sound.mp3")
