@@ -42,6 +42,9 @@ class Game(Singleton):
         self.gameover_txt = config.LARGE_FONT.render("Game Over", 1, config.GRAY)
         self.gameover_rect = self.gameover_txt.get_rect(
             center=(config.HALF_XWIN, config.HALF_YWIN))
+        
+        self.abilities_txt = config.SMALL_FONT.render("3", 1, config.RED)
+        self.abilities_pos = pygame.math.Vector2(config.HALF_XWIN * 2 - 70, 10)
 
     def close(self):
         self.__alive = False
@@ -84,7 +87,15 @@ class Game(Singleton):
         # User Interface
         if self.player.dead:
             self.window.blit(self.gameover_txt, self.gameover_rect)  # gameover txt
+        
         self.window.blit(self.score_txt, self.score_pos)  # score txt
+
+        if self.player.five_fingers:
+            self.abilities_txt = config.SMALL_FONT.render(str(self.player.ability_frames_left), 1, config.RED)
+        else:
+            self.abilities_txt = config.SMALL_FONT.render(str(self.player.ability_frames_left), 1, config.BLACK)
+            
+        self.window.blit(self.abilities_txt, self.abilities_pos)
 
         pygame.display.update()  # window update
         self.clock.tick(config.FPS)  # max loop/s

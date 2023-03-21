@@ -3,7 +3,8 @@ from pygame.math import Vector2
 from pygame.locals import KEYDOWN, KEYUP, K_LEFT, K_RIGHT
 from pygame.sprite import collide_rect
 from pygame.event import Event
-import pygame
+import mediapipe as mp
+import cv2
 
 from singleton import Singleton
 from sprite import Sprite
@@ -42,6 +43,14 @@ class Player(Sprite, Singleton):
         self.accel = .5
         self.deccel = .6
         self.dead = False
+
+        # mediapipe
+        self.cap = cv2.VideoCapture(0)
+        mp_hands = mp.solutions.hands
+        self.hands = mp_hands.Hands( model_complexity=0, min_detection_confidence=0.5, min_tracking_confidence=0.5 )
+        self.frame_num = 0
+        self.five_fingers = False
+        self.ability_frames_left = 100
 
         # image setup
         self._image = config.doodle
@@ -133,3 +142,58 @@ class Player(Sprite, Singleton):
         self.rect.y += self._velocity.y
 
         self.collisions()
+
+
+        self.frame_num += 1
+        if (self.frame_num % 5 is not 0):
+            return
+        success, image = self.cap.read()
+        image = cv2.flip(image, 1)
+        if not success:
+            return
+        # To improve performance, optionally mark the image as not writeable
+        image.flags.writeable = False
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        results = self.hands.process(image)
+
+        fingerCount = 0
+        if results and results.multi_hand_landmarks:
+            for hand_landmarks in results.multi_hand_landmarks:
+                # Get hand index to check label (left or right)
+                handIndex = results.multi_hand_landmarks.index(hand_landmarks)
+                handLabel = results.multi_handedness[handIndex].classification[0].label
+
+                # Set variable to keep landmarks positions (x and y)
+                handLandmarks = []
+
+                # Fill list with x and y positions of each landmark
+                for landmarks in hand_landmarks.landmark:
+                    handLandmarks.append([landmarks.x, landmarks.y])
+
+                # Test conditions for each finger: Count is increased if finger is 
+                #   considered raised.
+                # Thumb: TIP x position must be greater or lower than IP x position, 
+                #   deppeding on hand label.
+                if handLabel == "Left" and handLandmarks[4][0] > handLandmarks[3][0]:
+                    fingerCount = fingerCount+1
+                elif handLabel == "Right" and handLandmarks[4][0] < handLandmarks[3][0]:
+                    fingerCount = fingerCount+1
+
+                # Other fingers: TIP y position must be lower than PIP y position, 
+                #   as image origin is in the upper left corner.
+                if handLandmarks[8][1] < handLandmarks[6][1]:       #Index finger
+                    fingerCount = fingerCount+1
+                if handLandmarks[12][1] < handLandmarks[10][1]:     #Middle finger
+                    fingerCount = fingerCount+1
+                if handLandmarks[16][1] < handLandmarks[14][1]:     #Ring finger
+                    fingerCount = fingerCount+1
+                if handLandmarks[20][1] < handLandmarks[18][1]:     #Pinky
+                    fingerCount = fingerCount+1
+
+        if fingerCount >= 5 and self.ability_frames_left > 0:
+            self.gravity = config.GRAVITY / 4
+            self.five_fingers = True
+            self.ability_frames_left -= 1
+        else:
+            self.gravity = config.GRAVITY
+            self.five_fingers = False
