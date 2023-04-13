@@ -49,5 +49,5 @@ doodle = pygame.image.load('Images/doodle.png')
 doodle = pygame.transform.scale(doodle, PLAYER_SIZE)
 doodle_l = pygame.transform.flip(doodle, True, False)
 
-spring = pygame.image.load('Images/spring.jpg')
+spring = pygame.image.load('Images/spring.png')
 spring = pygame.transform.scale(spring, BONUS_SIZE)

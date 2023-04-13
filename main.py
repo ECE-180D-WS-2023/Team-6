@@ -94,7 +94,7 @@ class Game(Singleton):
         if self.player.five_fingers:
             self.abilities_txt = config.SMALL_FONT.render(str(self.player.ability_frames_left), 1, config.RED)
         else:
-            self.abilities_txt = config.SMALL_FONT.render(str(self.player.ability_frames_left), 1, config.BLACK)
+            self.abilities_txt = config.SMALL_FONT.render(str(self.player.ability_frames_left), 1, config.WHITE)
             
         self.window.blit(self.abilities_txt, self.abilities_pos)
 
