@@ -4,6 +4,8 @@ from player import Player
 from level import Level
 import settings as config
 import pygame
+from pygame import mixer
+
 
 
 class Game(Singleton):
@@ -19,6 +21,10 @@ class Game(Singleton):
     def __init__(self) -> None:
 
         # ============= Initialisation =============
+        mixer.init()
+        mixer.music.load('Images/Space-Jazz.mp3')
+        mixer.music.play()
+
         self.__alive = True
         # Window / Render
         self.window = pygame.display.set_mode(config.DISPLAY, config.FLAGS)
