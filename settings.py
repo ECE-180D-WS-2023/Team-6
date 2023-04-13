@@ -44,6 +44,7 @@ LARGE_FONT = SysFont("", 128)
 SMALL_FONT = SysFont("arial", 24)
 
 # Images
+backround = pygame.image.load('Images/backround_2.jpg')
 doodle = pygame.image.load('Images/doodle.png')
 doodle = pygame.transform.scale(doodle, PLAYER_SIZE)
 doodle_l = pygame.transform.flip(doodle, True, False)
