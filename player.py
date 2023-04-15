@@ -149,7 +149,7 @@ class Player(Sprite, Singleton):
 
 
         self.frame_num += 1
-        if (self.frame_num % 5 is not 0):
+        if (self.frame_num % 5 != 0):
             return
         success, image = self.cap.read()
         image = cv2.flip(image, 1)
