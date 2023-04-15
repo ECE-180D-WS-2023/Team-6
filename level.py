@@ -74,6 +74,7 @@ class Platform(Sprite):
         " Called in update if collision with player (safe to overrided)."
         if self.breakable:
             self.__level.remove_platform(self)
+            config.break_sound.play()
 
     # ( Overriding inheritance: Sprite.draw() )
     def draw(self, surface: Surface) -> None:
