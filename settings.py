@@ -59,7 +59,12 @@ break_sound = pygame.mixer.Sound("Images/breaking_sound.mp3")
 basic_sound = pygame.mixer.Sound("Images/basic_jumping.mp3")
 death_sound = pygame.mixer.Sound("Images/death_sound.mp3")
 
-# Music
-mixer.init()
-mixer.music.load('Images/Space-Jazz.mp3')
-mixer.music.play()
+
+# Menu settings
+pygame.display.set_caption("Doodle Jump 2.0")
+menu_font = pygame.font.Font(None, 40)
+countdown_font = pygame.font.Font(None, 100)
+menu_items = [("Single Player", (HALF_XWIN - 100, HALF_YWIN - 50)),
+              ("Multiplayer", (HALF_XWIN - 100, HALF_YWIN))]
+screen = pygame.display.set_mode((HALF_XWIN, HALF_YWIN))
+menu_background = pygame.image.load('Images/space_art.png')
