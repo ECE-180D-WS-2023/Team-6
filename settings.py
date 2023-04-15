@@ -1,5 +1,6 @@
 from pygame.font import SysFont
 from pygame import init
+from pygame import mixer
 import pygame
 
 init()
