@@ -51,3 +51,14 @@ doodle_l = pygame.transform.flip(doodle, True, False)
 
 spring = pygame.image.load('Images/spring.png')
 spring = pygame.transform.scale(spring, BONUS_SIZE)
+
+# Sounds
+jump_sound = pygame.mixer.Sound("Images/jump_sound.mp3")
+break_sound = pygame.mixer.Sound("Images/breaking_sound.mp3")
+basic_sound = pygame.mixer.Sound("Images/basic_jumping.mp3")
+death_sound = pygame.mixer.Sound("Images/death_sound.mp3")
+
+# Music
+mixer.init()
+mixer.music.load('Images/Space-Jazz.mp3')
+mixer.music.play()
