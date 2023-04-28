@@ -5,6 +5,8 @@ from level import Level
 import settings as config
 import pygame
 from pygame import mixer
+from connection import connection
+import random
 
 
 class Game(Singleton):
@@ -24,6 +26,7 @@ class Game(Singleton):
         mixer.music.load('Images/Space-Jazz.mp3')
         mixer.music.play()
 
+        self.id = random.randint(1, 1000)
         self.__alive = True
         # Window / Render
         self.window = pygame.display.set_mode(config.DISPLAY, config.FLAGS)
@@ -53,18 +56,33 @@ class Game(Singleton):
         
         self.abilities_txt = config.SMALL_FONT.render("3", 1, config.RED)
         self.abilities_pos = pygame.math.Vector2(config.HALF_XWIN * 2 - 70, 10)
+        
+        self.is_multiplayer = False
+        self.awaiting_partner = True
+        def handle_msg(client, data, msg):
+            msg = msg.payload.decode('ascii')
+            content = msg.split(',')
+            if content[0] == str(self.id):
+                return
+            print(content)
+            if content[1] == 'start_multiplayer':
+                self.awaiting_partner = False
+        connect = connection(handle_msg, self.id)
+        self.connection = connect
 
     # Draw menu function
     def draw_menu(self):
         config.screen.blit(config.menu_background, (0, 0))
 
-        title_text = config.LARGE_FONT.render("Doodle Jump 2.0", True, config.BLACK)
+        if self.is_multiplayer:
+            title_text = config.LARGE_FONT.render("Awaiting Partner", True, config.BLACK)
+        else:
+            title_text = config.LARGE_FONT.render("Doodle Jump 2.0", True, config.BLACK)
+            for text, position in config.menu_items:
+                menu_text = config.menu_font.render(text, True, config.BLACK)
+                config.screen.blit(menu_text, position)
+
         config.screen.blit(title_text, (config.HALF_XWIN - 350, config.HALF_YWIN - 200))
-
-        for text, position in config.menu_items:
-            menu_text = config.menu_font.render(text, True, config.BLACK)
-            config.screen.blit(menu_text, position)
-
         pygame.display.flip()
 
     # Countdown function
@@ -80,6 +98,7 @@ class Game(Singleton):
         self.__alive = False
 
     def reset(self):
+        self.player.ability_frames_left = 100
         self.camera.reset()
         self.lvl.reset()
         self.player.reset()
@@ -100,6 +119,8 @@ class Game(Singleton):
         # ----------- Update -----------
         self.player.update()
         self.lvl.update()
+        if self.player.ability_frames_left < 100:
+            self.player.ability_frames_left += 1/60
 
         if not self.player.dead:
             self.camera.update(self.player.rect)
@@ -144,9 +165,12 @@ class Game(Singleton):
     def menu(self):
         # Menu config
         menu = True
-
         while menu:
             self.draw_menu()
+            if self.is_multiplayer and not self.awaiting_partner:
+                self.countdown()
+                self.run()
+                menu = False
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -163,9 +187,14 @@ class Game(Singleton):
 
                         if text_x <= mouse_pos[0] <= text_x + text_width and text_y <= mouse_pos[
                             1] <= text_y + text_height:
-                            self.countdown()
-                            self.run()
-                            menu = False
+                            if text == 'Multiplayer':
+                                self.is_multiplayer = True
+                                self.awaiting_partner = True
+                                self.connection.publish('start_multiplayer')
+                            else:
+                                self.countdown()
+                                self.run()
+                                menu = False
 
 if __name__ == "__main__":
     # ============= PROGRAM STARTS HERE =============
