@@ -13,12 +13,18 @@ PORT = 1883
 def on_connect(client, userdata, flags, rc):
     print("Connected: " + str(rc))
     client.subscribe(topic)
+    client.subscribe("scores")
+
+def on_publish(client, userdata, flags, rc):
+    print("Posted Score to other player")
+    pass
 
 key_mapping = {"RIGHT": pygame.K_RIGHT, "LEFT": pygame.K_LEFT}
 
 client = mqtt.Client()
 client.connect(HOST, PORT, 60)
 client.on_connect = on_connect
+client.on_publish = on_publish
 
 
 class Game(Singleton):
@@ -94,6 +100,7 @@ class Game(Singleton):
             self.score = -self.camera.state.y // 50
             self.score_txt = config.SMALL_FONT.render(
                 str(self.score) + " m", 1, config.GRAY)
+            client.publish("scores", str(self.score))
 
     def _render_loop(self):
         # ----------- Display -----------
