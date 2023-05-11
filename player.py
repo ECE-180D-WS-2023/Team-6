@@ -1,6 +1,6 @@
 from math import copysign
 from pygame.math import Vector2
-from pygame.locals import KEYDOWN, KEYUP, K_LEFT, K_RIGHT
+from pygame.locals import KEYDOWN, KEYUP, K_LEFT, K_RIGHT, K_SPACE
 from pygame.sprite import collide_rect
 from pygame.event import Event
 import mediapipe as mp
@@ -42,6 +42,7 @@ class Player(Sprite, Singleton):
         self.gravity = config.GRAVITY
         self.accel = .5
         self.deccel = .6
+        self.space_pressed = False
         self.dead = False
 
         # mediapipe
@@ -90,6 +91,8 @@ class Player(Sprite, Singleton):
                 self._velocity.x = self.__startspeed
                 self._input = 1
                 self._image = config.doodle
+            elif event.key == K_SPACE:
+                self.space_pressed = not self.space_pressed
 
         # Check if stop moving
         elif event.type == KEYUP:
@@ -156,6 +159,15 @@ class Player(Sprite, Singleton):
         self.frame_num += 1
         if (self.frame_num % 5 != 0):
             return
+    
+        if self.space_pressed and self.ability_frames_left > 0:
+            self.gravity = config.GRAVITY / 4
+            self.five_fingers = True
+            self.ability_frames_left -= 3
+            return
+        else:
+            self.gravity = config.GRAVITY
+            self.five_fingers = False
         
         if self.cap is None:
             return
