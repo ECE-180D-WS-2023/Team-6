@@ -46,6 +46,10 @@ class Player(Sprite, Singleton):
 
         # mediapipe
         self.cap = cv2.VideoCapture(0)
+        success, _ = self.cap.read()
+        if not success:
+            self.cap = None
+
         mp_hands = mp.solutions.hands
         self.hands = mp_hands.Hands( model_complexity=0, min_detection_confidence=0.5, min_tracking_confidence=0.5 )
         self.frame_num = 0
@@ -115,6 +119,7 @@ class Player(Sprite, Singleton):
                     self.onCollide(platform.bonus)
                     self.jump(platform.bonus.force)
                     config.jump_sound.play()
+                    self.ability_frames_left = min(100, self.ability_frames_left + 10)
 
                 # check collisions with platform
                 if collide_rect(self, platform):
@@ -151,11 +156,15 @@ class Player(Sprite, Singleton):
         self.frame_num += 1
         if (self.frame_num % 5 != 0):
             return
+        
+        if self.cap is None:
+            return
         success, image = self.cap.read()
-        image = cv2.flip(image, 1)
         if not success:
             return
+        
         # To improve performance, optionally mark the image as not writeable
+        image = cv2.flip(image, 1)
         image.flags.writeable = False
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         results = self.hands.process(image)
@@ -197,7 +206,7 @@ class Player(Sprite, Singleton):
         if fingerCount >= 5 and self.ability_frames_left > 0:
             self.gravity = config.GRAVITY / 4
             self.five_fingers = True
-            self.ability_frames_left -= 1
+            self.ability_frames_left -= 3
         else:
             self.gravity = config.GRAVITY
             self.five_fingers = False
